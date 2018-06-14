@@ -12,14 +12,24 @@ namespace RayTracerInAWeekend
             return (float) rng.Value.NextDouble();
         }
 
-        public static Vector3 GetRandomInUnitSphere()
+        public static Vector3 GetRandomInUnitDisk()
         {
-            Random rng = new Random();
             Vector3 p;
             do
             {
-                p = new Vector3(2 * RandomFloat(), 2 * RandomFloat(), 2 * RandomFloat()) - Vector3.One;
-            } while (p.LengthSquared() >= 1.0);
+                p = 2f * new Vector3(RandomFloat(), RandomFloat(), 0) - new Vector3(1,1,0);
+            } while (Vector3.Dot(p,p) >= 1f);
+
+            return p;
+        }
+
+        public static Vector3 GetRandomInUnitSphere()
+        {
+            Vector3 p;
+            do
+            {
+                p = 2f * new Vector3(RandomFloat(), RandomFloat(), RandomFloat()) - Vector3.One;
+            } while (p.LengthSquared() >= 1f);
 
             return p;
         }

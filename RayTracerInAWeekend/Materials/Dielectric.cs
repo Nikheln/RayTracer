@@ -7,17 +7,15 @@ namespace RayTracerInAWeekend.Materials
     class Dielectric : IMaterial
     {
         private float RefractiveIndex;
-        private Vector3 Albedo;
 
-        public Dielectric(float refractiveIndex, Vector3 albedo)
+        public Dielectric(float refractiveIndex)
         {
             RefractiveIndex = refractiveIndex;
-            Albedo = albedo;
         }
 
         public bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
         {
-            attenuation = Albedo;
+            attenuation = Vector3.One;
 
             Vector3 reflected = VectorHelpers.Reflect(r.Direction, hitRecord.SurfaceNormal);
             Vector3 outwardNormal;

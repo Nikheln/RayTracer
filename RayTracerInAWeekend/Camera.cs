@@ -6,28 +6,33 @@ namespace RayTracerInAWeekend
 {
     class Camera
     {
-        private Vector3 LowerLeftCorner, Horizontal, Vertical, Origin;
+        private Vector3 LowerLeftCorner, Horizontal, Vertical, Origin, U, V, W;
+        private readonly float LensRadius;
 
-        public Camera(Vector3 lookFrom, Vector3 lookAt, Vector3 vup, float vFov, float aspect)
+        public Camera(Vector3 lookFrom, Vector3 lookAt, Vector3 vup, float vFov, float aspect, float aperture, float focalDistance)
         {
-            float vTheta = vFov * (float) (Math.PI / 180);
-            float halfHeight = (float) Math.Tan(vTheta / 2);
+            LensRadius = aperture / 2f;
+
+            float vTheta = vFov * (float) (Math.PI / 180f);
+            float halfHeight = (float) Math.Tan(vTheta / 2f);
             float halfWidth = aspect * halfHeight;
 
             Origin = lookFrom;
 
-            Vector3 w = (lookFrom - lookAt).GetUnitVector();
-            Vector3 u = Vector3.Cross(vup, w).GetUnitVector();
-            Vector3 v = Vector3.Cross(w, u).GetUnitVector();
+            W = (lookFrom - lookAt).GetUnitVector();
+            U = Vector3.Cross(vup, W).GetUnitVector();
+            V = Vector3.Cross(W, U);
 
-            LowerLeftCorner = lookFrom - halfWidth * u - halfHeight * v - w;
-            Horizontal = 2 * halfWidth * u;
-            Vertical = 2 * halfHeight * v;
+            LowerLeftCorner = Origin - halfWidth * focalDistance * U - halfHeight * focalDistance * V - focalDistance * W;
+            Horizontal = 2 * halfWidth * focalDistance * U;
+            Vertical = 2 * halfHeight * focalDistance * V;
         }
 
-        public Ray GetRay(float u, float v)
+        public Ray GetRay(float s, float t)
         {
-            return new Ray(Origin, LowerLeftCorner + u * Horizontal + v * Vertical - Origin);
+            Vector3 rd = LensRadius * VectorHelpers.GetRandomInUnitDisk();
+            Vector3 offset = U * rd.X + V * rd.Y;
+            return new Ray(Origin + offset, LowerLeftCorner + s * Horizontal + t * Vertical - Origin - offset);
         }
     }
 }

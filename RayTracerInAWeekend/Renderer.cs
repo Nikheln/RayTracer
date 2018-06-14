@@ -10,11 +10,9 @@ namespace RayTracerInAWeekend
     static class Renderer
     {
         private const double T_MAX = 100;
-        private const double T_MIN = 0.001;
-        private const int AA_POINTS = 16;
+        private const double T_MIN = 0.01;
+        private const int AA_POINTS = 4;
         private const int MAX_RECURSION_DEPTH = 50;
-
-        private static Random Rng;
 
         private static int imgW, imgH, bpp;
 
@@ -29,46 +27,66 @@ namespace RayTracerInAWeekend
             imgW = _imgW;
             imgH = _imgH;
             bpp = _bpp;
+            
 
-
-            Rng = new Random();
-
-            World = new HitableList();
-
-            Random rng = new Random("tama".GetHashCode());
-            for (int i = 0; i < 100; i++)
+            World = new HitableList
             {
-                double r = rng.NextDouble();
-                IMaterial m;
-                Vector3 a = new Vector3((float) rng.NextDouble(), (float) rng.NextDouble(), (float) rng.NextDouble());
-                if (r < 0.33)
+                new Sphere(new Vector3(0, -1000, 0), 1000f, new Lambertian(new Vector3(0.5f, 0.5f, 0.5f)))
+            };
+            
+            Func<float> randFloat = VectorHelpers.RandomFloat;
+            for (int i = -5; i < 5; i++)
+            {
+                for (int j = -5; j < 5; j++)
                 {
-                    m = new Metal(a, (float) rng.NextDouble() * 0.5f);
-                }
-                else if (r < 0.66)
-                {
-                    m = new Dielectric((float) rng.NextDouble() * 2, a);
-                }
-                else
-                {
-                    m = new Lambertian(a);
-                }
-                var s = new Sphere(new Vector3((float)rng.NextDouble() * 10, (float)rng.NextDouble() * 5, (float)rng.NextDouble() * (-10)), (float)rng.NextDouble() * 2, m);
-                World.Add(s);
-            }
-            Camera = new Camera(new Vector3(0,2,1), new Vector3(0,0,-1), new Vector3(0,1,0), 60, (1.0f*imgW)/imgH);
+                    Vector3 center = new Vector3(i + 0.9f * randFloat(), 0.2f, j + 0.9f * randFloat());
 
+                    float materialChoice = randFloat();
+                    IMaterial m;
+                    if (materialChoice < 0.75)
+                    {
+                        m = new Lambertian(new Vector3(randFloat() * randFloat(), randFloat() * randFloat(), randFloat() * randFloat()));
+                    }
+                    else if (materialChoice < 0.95)
+                    {
+                        m = new Metal(new Vector3(0.5f * (1 + randFloat()), 0.5f * (1 + randFloat()), 0.5f * (1 + randFloat())), 0.5f * randFloat());
+                    }
+                    else
+                    {
+                        m = new Dielectric(1.5f);
+                    }
+                    var s = new Sphere(center, 0.2f, m);
+                    World.Add(s);
+                }
+            }
+
+            World.Add(new Sphere(new Vector3(0, 1, 0), 1.0f, new Dielectric(1.5f)));
+            World.Add(new Sphere(new Vector3(-4, 1, 0), 1.0f, new Lambertian(new Vector3(0.4f, 0.2f, 0.1f))));
+            World.Add(new Sphere(new Vector3(4, 1, 0), 1.0f, new Metal(new Vector3(0.7f, 0.6f, 0.5f), 0)));
+
+            Vector3 lookFrom = new Vector3(8f, 3f, 2.5f);
+            Vector3 lookAt = new Vector3(0, 0.5f, 0);
+            Vector3 vup = Vector3.UnitY;
+            float vFov = 20;
+            float aspect = (1.0f * imgW) / imgH;
+            float aperture = 0.05f;
+            float focalDistance = (lookFrom - lookAt).Length();
+            Camera = new Camera(lookFrom, lookAt, vup, vFov, aspect, aperture, focalDistance);
+
+            float invWidth = 1.0f / imgW;
+            float invHeight = 1.0f / imgH;
             Parallel.For(0, imgH, y =>
             {
                 for (int x = 0; x < imgW; x++)
                 {
-                    Vector3 color = new Vector3(0, 0, 0);
-                    for (int _ = 0; _ < AA_POINTS; _++)
+                    Vector4 color = Vector4.Zero;
+                    for (uint sample = 0; sample < AA_POINTS; sample++)
                     {
-                        float xOffset = (float) (x + 0.1 * (Rng.NextDouble() - 0.5)) / (1.0f * imgW);
-                        float yOffset = (float) (y + 0.1 * (Rng.NextDouble() - 0.5)) / (1.0f * imgH);
-                        Vector3 colorSample = GetColorFor(Camera.GetRay(xOffset, yOffset), 0);
-                        color += colorSample;
+                        float xOffset = (x + randFloat() - 0.5f) * invWidth;
+                        float yOffset = (y + randFloat() - 0.5f) * invHeight;
+
+                        Ray r = Camera.GetRay(xOffset, yOffset);
+                        color += GetColorFor(r, 0);
                     }
                     color /= AA_POINTS;
 
@@ -83,24 +101,24 @@ namespace RayTracerInAWeekend
             Console.WriteLine("Scene rendered in " + st.ElapsedMilliseconds + " ms.");
         }
 
-        private static Vector3 GetColorFor(Ray r, int recursionDepth)
+        private static Vector4 GetColorFor(Ray r, int recursionDepth)
         {
             if (World.Hit(r, T_MIN, T_MAX, out HitRecord record))
             {
                 if (recursionDepth < MAX_RECURSION_DEPTH && record.Material.Scatter(r, record, out Vector3 attenuation, out Ray scattered))
                 {
-                    return attenuation * GetColorFor(scattered, recursionDepth + 1);
+                    return new Vector4(attenuation, 1f) * GetColorFor(scattered, recursionDepth + 1);
                 }
                 else
                 {
-                    return Vector3.Zero;
+                    return Vector4.Zero;
                 }
             }
             else
             {
-                Vector3 unitVec = r.Direction / r.Direction.Length();
-                double t = 0.5 * (unitVec.Y + 1.0);
-                return ((float) (1.0 - t) * Vector3.One + (float) t * new Vector3(0.5f, 0.7f, 1.0f));
+                Vector3 unitVec = r.Direction.GetUnitVector();
+                float t = 0.5f * (unitVec.Y + 1f);
+                return (1f - t) * Vector4.One + t * new Vector4(0.5f, 0.7f, 1f, 1f);
             }
         }
 

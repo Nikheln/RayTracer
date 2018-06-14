@@ -23,31 +23,39 @@ namespace RayTracerInAWeekend
         public bool IsHitBy(Ray r, double tMin, double tMax, out HitRecord record)
         {
             Vector3 oc = r.Origin - Center;
-            double a = Vector3.Dot(r.Direction, r.Direction);
-            double b = Vector3.Dot(oc, r.Direction);
-            double c = Vector3.Dot(oc, oc) - Radius * Radius;
+            float a = Vector3.Dot(r.Direction, r.Direction);
+            float b = Vector3.Dot(oc, r.Direction);
+            float c = Vector3.Dot(oc, oc) - Radius * Radius;
 
             double discriminant = b * b - a * c;
 
             if (discriminant > 0)
             {
-                double discrSqrt = Math.Sqrt(discriminant);
-                float _t = (float) ((-b - discrSqrt) / a);
-                if (_t <= tMin || _t >= tMax)
-                {
-                    _t = (float) ((-b + discrSqrt) / a);
-                }
-
-                if (_t > tMin && _t < tMax)
+                float discrSqrt = (float) Math.Sqrt(discriminant);
+                float _t = (-b - discrSqrt) / a;
+                if (_t < tMax && _t > tMin)
                 {
                     Vector3 hitPoint = r.PointAtParameter(_t);
-                    Vector3 normal = (hitPoint - Center) / Radius;
                     record = new HitRecord()
                     {
                         t = _t,
                         HitPoint = hitPoint,
-                        SurfaceNormal = normal,
-                        Material = Material
+                        SurfaceNormal = (hitPoint - Center) / Radius,
+                        Material = material
+                    };
+                    return true;
+                }
+
+                _t = (-b + discrSqrt) / a;
+                if (_t < tMax && _t > tMin)
+                {
+                    Vector3 hitPoint = r.PointAtParameter(_t);
+                    record = new HitRecord()
+                    {
+                        t = _t,
+                        HitPoint = hitPoint,
+                        SurfaceNormal = (hitPoint - Center) / Radius,
+                        Material = material
                     };
                     return true;
                 }

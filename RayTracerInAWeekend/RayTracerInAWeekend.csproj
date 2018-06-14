@@ -67,7 +67,6 @@
     <Compile Include="Ray.cs" />
     <Compile Include="Renderer.cs" />
     <Compile Include="Sphere.cs" />
-    <Compile Include="Vec3.cs" />
     <Compile Include="VectorHelpers.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
