@@ -17,7 +17,7 @@ namespace RayTracerInAWeekend.Materials
 
         public bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
         {
-            Vector3 reflected = VectorHelpers.Reflect(r.Direction / r.Direction.Length(), hitRecord.SurfaceNormal);
+            Vector3 reflected = VectorHelpers.Reflect(r.Direction.GetUnitVector(), hitRecord.SurfaceNormal);
             scattered = new Ray(hitRecord.HitPoint, reflected + Fuzz * VectorHelpers.GetRandomInUnitSphere());
             attenuation = Albedo;
             return Vector3.Dot(scattered.Direction, hitRecord.SurfaceNormal) > 0;

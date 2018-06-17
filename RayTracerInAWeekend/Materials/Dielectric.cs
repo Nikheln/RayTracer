@@ -37,7 +37,7 @@ namespace RayTracerInAWeekend.Materials
 
             float reflectProb = 1.0f;
 
-            if (Refract(r.Direction, outwardNormal, niOverNt, out Vector3 refracted))
+            if (Refract(r.Direction, outwardNormal.GetUnitVector(), niOverNt, out Vector3 refracted))
             {
                 reflectProb = Schlick(cosine);
             }
@@ -62,7 +62,7 @@ namespace RayTracerInAWeekend.Materials
 
         private bool Refract(Vector3 v, Vector3 surfaceNormal, float niOverNt, out Vector3 refracted)
         {
-            Vector3 unitV = v / v.Length();
+            Vector3 unitV = v.GetUnitVector();
             float dt = Vector3.Dot(unitV, surfaceNormal);
             float discriminant = 1.0f - niOverNt * niOverNt * (1.0f - dt * dt);
 

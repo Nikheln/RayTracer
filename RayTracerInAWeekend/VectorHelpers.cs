@@ -41,7 +41,7 @@ namespace RayTracerInAWeekend
 
         public static Vector3 GetUnitVector(this Vector3 vector)
         {
-            return vector / vector.Length();
+            return Vector3.Normalize(vector);
         }
     }
 }

@@ -9,8 +9,6 @@
         Title="MainWindow">
     <Grid>
         <Image
-            x:Name="ImageComponent"
-            Width="1600"
-            Height="900"/>
+            x:Name="ImageComponent"/>
     </Grid>
 </Window>

@@ -14,11 +14,9 @@ namespace RayTracerInAWeekend
         {
             Center = center;
             Radius = radius;
-            this.material = material;
+            Material = material;
         }
-
-        private IMaterial material;
-        public IMaterial Material => material;
+        public IMaterial Material { get; }
 
         public bool IsHitBy(Ray r, double tMin, double tMax, out HitRecord record)
         {
@@ -41,7 +39,7 @@ namespace RayTracerInAWeekend
                         t = _t,
                         HitPoint = hitPoint,
                         SurfaceNormal = (hitPoint - Center) / Radius,
-                        Material = material
+                        Material = Material
                     };
                     return true;
                 }
@@ -55,7 +53,7 @@ namespace RayTracerInAWeekend
                         t = _t,
                         HitPoint = hitPoint,
                         SurfaceNormal = (hitPoint - Center) / Radius,
-                        Material = material
+                        Material = Material
                     };
                     return true;
                 }

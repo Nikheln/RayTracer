@@ -11,30 +11,27 @@ namespace RayTracerInAWeekend
     /// </summary>
     public partial class MainWindow : Window
     {
-
-        private readonly int imgW, imgH;
-
         private WriteableBitmap Bitmap;
 
         public MainWindow()
         {
             InitializeComponent();
-            imgW = (int) ImageComponent.Width;
-            imgH = (int) ImageComponent.Height;
+            ImageComponent.Width = Renderer.IMG_WIDTH;
+            ImageComponent.Height = Renderer.IMG_HEIGHT;
 
             var pixelFormat = PixelFormats.Rgb24;
             Bitmap = new WriteableBitmap(
-                imgW,
-                imgH,
+                Renderer.IMG_WIDTH,
+                Renderer.IMG_HEIGHT,
                 96,
                 96,
                 pixelFormat,
                 null
                 );
             bpp = pixelFormat.BitsPerPixel / 8;
-            sourceRect = new Int32Rect(0, 0, imgW, imgH);
+            sourceRect = new Int32Rect(0, 0, Renderer.IMG_WIDTH, Renderer.IMG_HEIGHT);
             imgBuffer = new byte[Bitmap.PixelWidth * Bitmap.PixelHeight * bpp];
-            stride = bpp * imgW;
+            stride = bpp * Renderer.IMG_WIDTH;
 
             ImageComponent.Source = Bitmap;
 
@@ -48,7 +45,7 @@ namespace RayTracerInAWeekend
         private void Render()
         {
             Array.Clear(imgBuffer, 0, imgBuffer.Length);
-            Renderer.Render(imgW, imgH, bpp, imgBuffer);
+            Renderer.Render(bpp, imgBuffer);
 
             Bitmap.WritePixels(sourceRect, imgBuffer, stride, 0);
         }
