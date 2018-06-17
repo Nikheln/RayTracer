@@ -3,7 +3,6 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
-using RayTracerInAWeekend.Materials;
 using RayTracerInAWeekend.Scenes;
 
 namespace RayTracerInAWeekend
@@ -12,9 +11,9 @@ namespace RayTracerInAWeekend
     {
         public const int IMG_WIDTH = 1200;
         public const int IMG_HEIGHT = 800;
-        private const double T_MAX = 100;
-        private const double T_MIN = 0.01;
-        private const int AA_POINTS = 4;
+        private const float T_MAX = 100f;
+        private const float T_MIN = 0.01f;
+        private const int AA_POINTS = 10;
         private const int MAX_RECURSION_DEPTH = 100;
 
         private static int bpp;
@@ -40,8 +39,8 @@ namespace RayTracerInAWeekend
                     Vector4 color = Vector4.Zero;
                     for (uint sample = 0; sample < AA_POINTS; sample++)
                     {
-                        float xOffset = (x + VectorHelpers.RandomFloat() - 0.5f) / IMG_WIDTH;
-                        float yOffset = (y + VectorHelpers.RandomFloat() - 0.5f) / IMG_HEIGHT;
+                        double xOffset = (x + VectorHelpers.RandomFloat() - 0.5f) / ((double) IMG_WIDTH);
+                        double yOffset = (y + VectorHelpers.RandomFloat() - 0.5f) / ((double) IMG_HEIGHT);
 
                         Ray r = Camera.GetRay(xOffset, yOffset);
                         color += GetColorFor(r, 0);

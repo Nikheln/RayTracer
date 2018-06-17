@@ -51,8 +51,8 @@ namespace RayTracerInAWeekend.Scenes
             Vector3 lookFrom = new Vector3(9.5f, 2f, 2.5f);
             Vector3 lookAt = new Vector3(3, 0.5f, 0.65f);
             Vector3 vup = Vector3.UnitY;
-            float vFov = 25;
-            float aperture = 0.1f;
+            float vFov = 25f;
+            float aperture = 0.01f;
             float focalDistance = (lookFrom - lookAt).Length();
 
             return new Camera(lookFrom, lookAt, vup, vFov, aspectRatio, aperture, focalDistance);

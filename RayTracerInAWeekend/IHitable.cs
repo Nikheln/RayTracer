@@ -7,7 +7,7 @@ namespace RayTracerInAWeekend
 {
     public struct HitRecord
     {
-        public double t;
+        public float t;
         public Vector3 HitPoint;
         public Vector3 SurfaceNormal;
         public IMaterial Material;
@@ -16,12 +16,12 @@ namespace RayTracerInAWeekend
     interface IHitable
     {
         IMaterial Material { get; }
-        bool IsHitBy(Ray r, double tMin, double tMax, out HitRecord record);
+        bool IsHitBy(Ray r, float tMin, float tMax, out HitRecord record);
     }
 
     class HitableList : List<IHitable>
     {
-        public bool Hit(Ray r, double tMin, double tMax, out HitRecord record)
+        public bool Hit(Ray r, float tMin, float tMax, out HitRecord record)
         {
             bool hitAnything = false;
             HitRecord closestRecord = new HitRecord() { t = tMax };

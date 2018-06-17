@@ -28,11 +28,14 @@ namespace RayTracerInAWeekend
             Vertical = 2 * halfHeight * focalDistance * V;
         }
 
-        public Ray GetRay(float s, float t)
+        public Ray GetRay(double s, double t)
         {
             Vector3 rd = LensRadius * VectorHelpers.GetRandomInUnitDisk();
             Vector3 offset = U * rd.X + V * rd.Y;
-            return new Ray(Origin + offset, LowerLeftCorner + s * Horizontal + t * Vertical - Origin - offset);
+
+            var origin = Origin + offset;
+            var direction = LowerLeftCorner + new Vector3((float) (s * Horizontal.X), (float) (s * Horizontal.Y), (float) (s * Horizontal.Z)) + new Vector3((float) (t * Vertical.X), (float) (t * Vertical.Y), (float) (t * Vertical.Z)) - origin;
+            return new Ray(origin, direction);
         }
     }
 }

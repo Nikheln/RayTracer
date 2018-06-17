@@ -68,6 +68,7 @@
     <Compile Include="Renderer.cs" />
     <Compile Include="Scenes\BookScene.cs" />
     <Compile Include="Scenes\IScene.cs" />
+    <Compile Include="Scenes\ToyPathTracerScene.cs" />
     <Compile Include="Sphere.cs" />
     <Compile Include="VectorHelpers.cs" />
     <Page Include="MainWindow.xaml">

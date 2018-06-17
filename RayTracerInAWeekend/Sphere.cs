@@ -18,7 +18,7 @@ namespace RayTracerInAWeekend
         }
         public IMaterial Material { get; }
 
-        public bool IsHitBy(Ray r, double tMin, double tMax, out HitRecord record)
+        public bool IsHitBy(Ray r, float tMin, float tMax, out HitRecord record)
         {
             Vector3 oc = r.Origin - Center;
             float a = Vector3.Dot(r.Direction, r.Direction);
