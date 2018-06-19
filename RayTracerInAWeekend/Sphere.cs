@@ -5,7 +5,7 @@ using RayTracerInAWeekend.Materials;
 
 namespace RayTracerInAWeekend
 {
-    class Sphere : IHitable
+    class Sphere : IHitable, IVisible
     {
         public Vector3 Center;
         public float Radius;
@@ -15,8 +15,17 @@ namespace RayTracerInAWeekend
             Center = center;
             Radius = radius;
             Material = material;
+
+            _boundingBox = new BoundingBox(Center - new Vector3(Radius, Radius, Radius), Center + new Vector3(Radius, Radius, Radius));
         }
         public IMaterial Material { get; }
+
+        private BoundingBox _boundingBox;
+        public bool BoundingBox(float t0, float t1, out BoundingBox box)
+        {
+            box = _boundingBox;
+            return true;
+        }
 
         public bool IsHitBy(Ray r, float tMin, float tMax, out HitRecord record)
         {

@@ -58,6 +58,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="BoundingVolumes\BoundingBox.cs" />
+    <Compile Include="BoundingVolumes\BVHNode.cs" />
     <Compile Include="Camera.cs" />
     <Compile Include="IHitable.cs" />
     <Compile Include="Materials\Dielectric.cs" />

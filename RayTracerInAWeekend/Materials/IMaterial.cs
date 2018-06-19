@@ -7,4 +7,9 @@ namespace RayTracerInAWeekend.Materials
     {
         bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered);
     }
+
+    public interface IVisible
+    {
+        IMaterial Material { get; }
+    }
 }

@@ -9,12 +9,12 @@ namespace RayTracerInAWeekend
 {
     static class Renderer
     {
-        public const int IMG_WIDTH = 1200;
-        public const int IMG_HEIGHT = 800;
+        public const int IMG_WIDTH = 800;
+        public const int IMG_HEIGHT = 600;
         private const float T_MAX = 100f;
         private const float T_MIN = 0.01f;
-        private const int AA_POINTS = 10;
-        private const int MAX_RECURSION_DEPTH = 100;
+        private const int AA_POINTS = 8;
+        private const int MAX_RECURSION_DEPTH = 10;
 
         private static int bpp;
 
@@ -28,10 +28,12 @@ namespace RayTracerInAWeekend
             
             bpp = _bpp;
             
-            IScene scene = new BookScene();
+            IScene scene = new ToyPathTracerScene();
+            //IScene scene = new BookScene();
             World = scene.GetSceneWorld();
             Camera = scene.GetDefaultCamera((1f * IMG_WIDTH) / IMG_HEIGHT);
-            
+            World.RebuildBvhTree();
+
             Parallel.For(0, IMG_HEIGHT, y =>
             {
                 for (int x = 0; x < IMG_WIDTH; x++)
@@ -60,7 +62,7 @@ namespace RayTracerInAWeekend
 
         private static Vector4 GetColorFor(Ray r, int recursionDepth)
         {
-            if (World.Hit(r, T_MIN, T_MAX, out HitRecord record))
+            if (World.IsHitBy(r, T_MIN, T_MAX, out HitRecord record))
             {
                 if (recursionDepth < MAX_RECURSION_DEPTH && record.Material.Scatter(r, record, out Vector3 attenuation, out Ray scattered))
                 {

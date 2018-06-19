@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
+using RayTracerInAWeekend.BoundingVolumes;
 using RayTracerInAWeekend.Materials;
 
 namespace RayTracerInAWeekend
@@ -13,29 +13,75 @@ namespace RayTracerInAWeekend
         public IMaterial Material;
     }
 
-    interface IHitable
+    public interface IHitable
     {
-        IMaterial Material { get; }
         bool IsHitBy(Ray r, float tMin, float tMax, out HitRecord record);
+        bool BoundingBox(float t0, float t1, out BoundingBox box);
     }
 
-    class HitableList : List<IHitable>
+    public static class HitableExtensions
     {
-        public bool Hit(Ray r, float tMin, float tMax, out HitRecord record)
+        public static readonly HitRecord NULL_RECORD = new HitRecord();
+
+        public static BoundingBox GetGenericBoundingBox(this IHitable hitable)
         {
-            bool hitAnything = false;
-            HitRecord closestRecord = new HitRecord() { t = tMax };
-            foreach (var hitable in this)
+            hitable.BoundingBox(float.MinValue, float.MaxValue, out BoundingBox bb);
+            return bb;
+        }
+
+        public static Vector3 GetBBCenter(this IHitable hitable)
+        {
+            var bb = hitable.GetGenericBoundingBox();
+            return new Vector3(
+                (bb.Min.X + bb.Max.X) / 2,
+                (bb.Min.Y + bb.Max.Y) / 2,
+                (bb.Min.Z + bb.Max.Z) / 2
+                );
+        }
+    }
+
+    class HitableList : List<IHitable>, IHitable
+    {
+        private BVHNode bvhRoot;
+
+        public bool BoundingBox(float t0, float t1, out BoundingBox box)
+        {
+            box = new BoundingBox(Vector3.Zero, Vector3.Zero);
+            if (Count == 0)
             {
-                if (hitable.IsHitBy(r, tMin, closestRecord.t, out HitRecord tempRecord))
+                return false;
+            }
+
+            if (!this[0].BoundingBox(t0, t1, out BoundingBox tempBox))
+            {
+                return false;
+            }
+
+            box = tempBox;
+
+            for (int i = 1; i < Count; i++)
+            {
+                if (this[i].BoundingBox(t0, t1, out tempBox))
                 {
-                    hitAnything = true;
-                    closestRecord = tempRecord;
+                    box = new BoundingBox(box, tempBox);
+                }
+                else
+                {
+                    return false;
                 }
             }
 
-            record = closestRecord;
-            return hitAnything;
+            return true;
+        }
+
+        public void RebuildBvhTree()
+        {
+            bvhRoot = new BVHNode(ToArray());
+        }
+
+        public bool IsHitBy(Ray r, float tMin, float tMax, out HitRecord record)
+        {
+            return bvhRoot.IsHitBy(r, tMin, tMax, out record);
         }
     }
 }
