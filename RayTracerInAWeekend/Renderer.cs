@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Threading.Tasks;
+using RayTracerInAWeekend.Hitables;
 using RayTracerInAWeekend.Scenes;
 
 namespace RayTracerInAWeekend
@@ -13,7 +14,7 @@ namespace RayTracerInAWeekend
         public const int IMG_HEIGHT = 600;
         private const float T_MAX = 100f;
         private const float T_MIN = 0.01f;
-        private const int AA_POINTS = 8;
+        private const int AA_POINTS = 16;
         private const int MAX_RECURSION_DEPTH = 10;
 
         private static int bpp;
@@ -27,9 +28,11 @@ namespace RayTracerInAWeekend
             st.Start();
             
             bpp = _bpp;
-            
-            IScene scene = new ToyPathTracerScene();
+
+            //IScene scene = new ToyPathTracerScene();
             //IScene scene = new BookScene();
+            //IScene scene = new TwoSpheresScene();
+            IScene scene = new LightScene();
             World = scene.GetSceneWorld();
             Camera = scene.GetDefaultCamera((1f * IMG_WIDTH) / IMG_HEIGHT);
             World.RebuildBvhTree();
@@ -38,14 +41,14 @@ namespace RayTracerInAWeekend
             {
                 for (int x = 0; x < IMG_WIDTH; x++)
                 {
-                    Vector4 color = Vector4.Zero;
+                    Vector3 color = Vector3.Zero;
                     for (uint sample = 0; sample < AA_POINTS; sample++)
                     {
                         double xOffset = (x + VectorHelpers.RandomFloat() - 0.5f) / ((double) IMG_WIDTH);
                         double yOffset = (y + VectorHelpers.RandomFloat() - 0.5f) / ((double) IMG_HEIGHT);
 
                         Ray r = Camera.GetRay(xOffset, yOffset);
-                        color += GetColorFor(r, 0);
+                        color += Color(r, 0);
                     }
                     color /= AA_POINTS;
 
@@ -60,24 +63,26 @@ namespace RayTracerInAWeekend
             Console.WriteLine("Scene rendered in " + st.ElapsedMilliseconds + " ms.");
         }
 
-        private static Vector4 GetColorFor(Ray r, int recursionDepth)
+        private static Vector3 Color(Ray r, int recursionDepth)
         {
             if (World.IsHitBy(r, T_MIN, T_MAX, out HitRecord record))
             {
+                Vector3 emitted = record.Material.Emitted(record.u, record.v, record.HitPoint);
                 if (recursionDepth < MAX_RECURSION_DEPTH && record.Material.Scatter(r, record, out Vector3 attenuation, out Ray scattered))
                 {
-                    return new Vector4(attenuation, 1f) * GetColorFor(scattered, recursionDepth + 1);
+                    return emitted + attenuation * Color(scattered, recursionDepth + 1);
                 }
                 else
                 {
-                    return Vector4.Zero;
+                    return emitted;
                 }
             }
             else
             {
-                Vector3 unitVec = r.Direction.GetUnitVector();
-                float t = 0.5f * (unitVec.Y + 1f);
-                return (1f - t) * Vector4.One + t * new Vector4(0.5f, 0.7f, 1f, 1f);
+                return Vector3.Zero;
+                //Vector3 unitVec = r.Direction.GetUnitVector();
+                //float t = 0.5f * (unitVec.Y + 1f);
+                //return (1f - t) * Vector3.One + t * new Vector3(0.5f, 0.7f, 1f);
             }
         }
 

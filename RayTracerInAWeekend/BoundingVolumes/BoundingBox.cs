@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using RayTracerInAWeekend.Hitables;
 
 namespace RayTracerInAWeekend
 {

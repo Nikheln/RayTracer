@@ -1,4 +1,6 @@
 ﻿
+using RayTracerInAWeekend.Hitables;
+
 namespace RayTracerInAWeekend.Scenes
 {
     interface IScene

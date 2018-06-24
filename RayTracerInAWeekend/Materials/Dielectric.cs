@@ -1,10 +1,11 @@
 ﻿
 using System;
 using System.Numerics;
+using RayTracerInAWeekend.Hitables;
 
 namespace RayTracerInAWeekend.Materials
 {
-    class Dielectric : IMaterial
+    class Dielectric : Material
     {
         private float RefractiveIndex;
 
@@ -13,7 +14,7 @@ namespace RayTracerInAWeekend.Materials
             RefractiveIndex = refractiveIndex;
         }
 
-        public bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
+        public override bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
         {
             attenuation = Vector3.One;
 

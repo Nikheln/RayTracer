@@ -3,14 +3,14 @@ using System.Numerics;
 using RayTracerInAWeekend.BoundingVolumes;
 using RayTracerInAWeekend.Materials;
 
-namespace RayTracerInAWeekend
+namespace RayTracerInAWeekend.Hitables
 {
     public struct HitRecord
     {
-        public float t;
+        public float t, u, v;
         public Vector3 HitPoint;
         public Vector3 SurfaceNormal;
-        public IMaterial Material;
+        public Material Material;
     }
 
     public interface IHitable

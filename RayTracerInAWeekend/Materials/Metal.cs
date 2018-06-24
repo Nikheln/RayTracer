@@ -1,13 +1,14 @@
 ﻿
 using System;
 using System.Numerics;
+using RayTracerInAWeekend.Hitables;
 
 namespace RayTracerInAWeekend.Materials
 {
-    class Metal : IMaterial
+    class Metal : Material
     {
         private Vector3 Albedo;
-        private float Fuzz;
+        private readonly float Fuzz;
 
         public Metal(Vector3 albedo, float fuzziness)
         {
@@ -15,7 +16,7 @@ namespace RayTracerInAWeekend.Materials
             Fuzz = fuzziness;
         }
 
-        public bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
+        public override bool Scatter(Ray r, HitRecord hitRecord, out Vector3 attenuation, out Ray scattered)
         {
             Vector3 reflected = VectorHelpers.Reflect(r.Direction.GetUnitVector(), hitRecord.SurfaceNormal);
             scattered = new Ray(hitRecord.HitPoint, reflected + Fuzz * VectorHelpers.GetRandomInUnitSphere());

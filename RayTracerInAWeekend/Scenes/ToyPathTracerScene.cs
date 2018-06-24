@@ -1,5 +1,7 @@
 ﻿using System.Numerics;
+using RayTracerInAWeekend.Hitables;
 using RayTracerInAWeekend.Materials;
+using RayTracerInAWeekend.Textures;
 
 namespace RayTracerInAWeekend.Scenes
 {
@@ -19,26 +21,26 @@ namespace RayTracerInAWeekend.Scenes
 
         public HitableList GetSceneWorld()
         {
-            var _materials = new IMaterial[]
+            var _materials = new Material[]
             {
-                new Lambertian(new Vector3(0.8f, 0.8f, 0.8f)),
-                new Lambertian(new Vector3(0.8f, 0.4f, 0.4f)),
-                new Lambertian(new Vector3(0.4f, 0.8f, 0.4f)),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.8f, 0.8f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.4f, 0.4f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.4f, 0.8f, 0.4f))),
                 new Metal(new Vector3(0.4f, 0.4f, 0.8f), 0),
                 new Metal(new Vector3(0.4f, 0.8f, 0.4f), 0),
                 new Metal(new Vector3(0.4f, 0.8f, 0.4f), 0.2f),
                 new Metal(new Vector3(0.4f, 0.8f, 0.4f), 0.6f),
                 new Dielectric(1.5f),
-                new Lambertian(new Vector3(0.8f, 0.6f, 0.2f)),
-                new Lambertian(new Vector3(0.1f, 0.1f, 0.1f)),
-                new Lambertian(new Vector3(0.2f, 0.2f, 0.2f)),
-                new Lambertian(new Vector3(0.3f, 0.3f, 0.3f)),
-                new Lambertian(new Vector3(0.4f, 0.4f, 0.4f)),
-                new Lambertian(new Vector3(0.5f, 0.5f, 0.5f)),
-                new Lambertian(new Vector3(0.6f, 0.6f, 0.6f)),
-                new Lambertian(new Vector3(0.7f, 0.7f, 0.7f)),
-                new Lambertian(new Vector3(0.8f, 0.8f, 0.8f)),
-                new Lambertian(new Vector3(0.9f, 0.9f, 0.9f)),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.6f, 0.2f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.1f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.2f, 0.2f, 0.2f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.3f, 0.3f, 0.3f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.4f, 0.4f, 0.4f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.5f, 0.5f, 0.5f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.6f, 0.6f, 0.6f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.7f, 0.7f, 0.7f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.8f, 0.8f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.9f, 0.9f, 0.9f))),
                 new Metal(new Vector3(0.1f, 0.1f, 0.1f), 0f),
                 new Metal(new Vector3(0.2f, 0.2f, 0.2f), 0f),
                 new Metal(new Vector3(0.3f, 0.3f, 0.3f), 0f),
@@ -57,16 +59,16 @@ namespace RayTracerInAWeekend.Scenes
                 new Metal(new Vector3(0.1f, 0.8f, 0.8f), 0f),
                 new Metal(new Vector3(0.1f, 0.1f, 0.8f), 0f),
                 new Metal(new Vector3(0.5f, 0.1f, 0.8f), 0f),
-                new Lambertian(new Vector3(0.8f, 0.1f, 0.1f)),
-                new Lambertian(new Vector3(0.8f, 0.5f, 0.1f)),
-                new Lambertian(new Vector3(0.8f, 0.8f, 0.1f)),
-                new Lambertian(new Vector3(0.4f, 0.8f, 0.1f)),
-                new Lambertian(new Vector3(0.1f, 0.8f, 0.1f)),
-                new Lambertian(new Vector3(0.1f, 0.8f, 0.5f)),
-                new Lambertian(new Vector3(0.1f, 0.8f, 0.8f)),
-                new Lambertian(new Vector3(0.1f, 0.1f, 0.8f)),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.1f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.5f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.8f, 0.8f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.4f, 0.8f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.8f, 0.1f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.8f, 0.5f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.8f, 0.8f))),
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.1f, 0.8f))),
                 new Metal(new Vector3(0.5f, 0.1f, 0.8f), 0f),
-                new Lambertian(new Vector3(0.1f, 0.2f, 0.5f))
+                new Lambertian(new ConstantTexture(new Vector3(0.1f, 0.2f, 0.5f)))
             };
             int i = 0;
 

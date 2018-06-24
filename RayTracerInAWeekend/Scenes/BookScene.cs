@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Numerics;
+using System.Windows.Media;
+using RayTracerInAWeekend.Hitables;
 using RayTracerInAWeekend.Materials;
+using RayTracerInAWeekend.Textures;
 
 namespace RayTracerInAWeekend.Scenes
 {
@@ -10,7 +13,7 @@ namespace RayTracerInAWeekend.Scenes
         {
             var world = new HitableList
             {
-                new Sphere(new Vector3(0, -1000, 0), 1000f, new Lambertian(new Vector3(0.5f, 0.5f, 0.5f)))
+                new Sphere(new Vector3(0, -1000, 0), 1000f, new Lambertian(new CheckerTexture(new ConstantTexture(Colors.AntiqueWhite), new ConstantTexture(Colors.DarkBlue))))
             };
 
             Func<float> randFloat = VectorHelpers.RandomFloat;
@@ -21,10 +24,10 @@ namespace RayTracerInAWeekend.Scenes
                     Vector3 center = new Vector3(i + 0.9f * randFloat(), 0.2f, j + 0.9f * randFloat());
 
                     float materialChoice = randFloat();
-                    IMaterial m;
+                    Material m;
                     if (materialChoice < 0.75)
                     {
-                        m = new Lambertian(new Vector3(randFloat() * randFloat(), randFloat() * randFloat(), randFloat() * randFloat()));
+                        m = new Lambertian(new ConstantTexture(new Vector3(randFloat() * randFloat(), randFloat() * randFloat(), randFloat() * randFloat())));
                     }
                     else if (materialChoice < 0.95)
                     {
@@ -40,7 +43,7 @@ namespace RayTracerInAWeekend.Scenes
             }
 
             world.Add(new Sphere(new Vector3(0, 1, 0), 1.0f, new Dielectric(1.5f)));
-            world.Add(new Sphere(new Vector3(-4, 1, 0), 1.0f, new Lambertian(new Vector3(0.4f, 0.2f, 0.1f))));
+            world.Add(new Sphere(new Vector3(-4, 1, 0), 1.0f, new Lambertian(new ConstantTexture(new Vector3(0.4f, 0.2f, 0.1f)))));
             world.Add(new Sphere(new Vector3(4, 1, 0), 1.0f, new Metal(new Vector3(0.7f, 0.6f, 0.5f), 0)));
 
             return world;
